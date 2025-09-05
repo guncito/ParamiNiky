@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Para mi Nicole bonita &lt;3</title>
+<style>
+:root{ --bg:#000000; --card:#0b1220; --accent:#ff6b81; --text:#ff6b81; }
+body{ margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+       background: var(--bg);
+       font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; }
+.card{ width:92vw; max-width:760px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+       border-radius:18px; padding:28px; box-shadow:0 8px 30px rgba(2,6,23,0.6); color:var(--text);
+       position:relative; overflow:hidden; text-align:center; }
+h1{ margin:0 0 8px 0; font-size:1.6rem; letter-spacing:0.4px; color:var(--accent); }
+p.lead{ margin:0 0 18px 0; font-size:1rem; opacity:0.95; }
+.message{ font-size:1.05rem; line-height:1.5; min-height:3.2rem; white-space:pre-wrap; margin-bottom:18px; }
+.button{ margin-top:14px; display:inline-block; padding:10px 14px; background:linear-gradient(90deg,var(--accent),#ff9aa2);
+         color:#111; border-radius:12px; text-decoration:none; font-weight:600; cursor:pointer; }
+.button-small{ padding:8px 12px; font-size:0.95rem; margin:6px; }
+.sorpresa img{ max-width:80%; border-radius:16px; margin-top:12px; box-shadow:0 4px 20px rgba(255,107,129,0.5); }
+
+.confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.piece{ position:absolute; width:16px; height:16px; background:var(--accent); transform:rotate(45deg); border-radius:3px; opacity:0.8; }
+.piece:before, .piece:after{
+  content:'';
+  position:absolute;
+  width:16px;
+  height:16px;
+  background:var(--accent);
+  border-radius:50%;
+}
+.piece:before{ top:-8px; left:0; }
+.piece:after{ left:8px; top:0; }
+@media(min-width:760px){ .card{ padding:36px } h1{font-size:1.9rem} }
+footer{ margin-top:18px; font-size:0.85rem; opacity:0.7 }
+</style>
+</head>
+<body>
+  <div class="card" role="article" aria-label="Tarjeta romántica">
+    <h1>Para mi Nicole bonita &lt;3</h1>
+    <p class="lead" id="leadText">Todo va a mejorar ^^</p>
+
+    <div class="message" id="typed"></div>
+    <a class="button" id="nextBtn">Siguiente</a>
+
+    <div class="sorpresa" id="sorpresa" style="display:none;">
+      <p class="message" id="pregunta">¿Quieres ser mi novia?</p>
+      <button class="button button-small" id="siBtn">Sí</button>
+      <button class="button button-small" id="noBtn">No</button>
+      <img src="https://i.pinimg.com/736x/02/7d/c3/027dc36e15b58d7165f451e38dd4e712.jpg" alt="Foto de Nicole">
+    </div>
+
+    <footer>Con cariño — <strong>Batman</strong> (yo)</footer>
+    <div class="confetti" id="confetti"></div>
+  </div>
+
+<script>
+const paragraphs = [
+  "Hola mi niña ^^.\nHice esto pq sí y pq te lo mereces.",
+  "Aunque estemos lejos, estás aquí conmigo en cada momento, me haces reír y me haces sentir mejor cuando pienso que todo está mal.",
+  "Te extraño. Te amo. Quisiera preguntarte algo. Pero primero, un poema:",
+  "Entre tus ojos encuentro el cielo,\ny en tu sonrisa, la paz que anhelo.\nTus palabras son dulces melodías,\nque acompañan mis noches y mis días.",
+  "Si pudiera, guardaría tu risa,\ncomo un tesoro.\nY cada momento a tu lado, amor,\nes un suspiro que nace del corazón.",
+  "Aunque la distancia intente separarnos,\nmi corazón siempre sabe encontrarte.\nPorque en cada latido, en cada pensamiento,\nestás tú, mi Nicole, mi más grande anhelo."
+];
+
+const typedEl = document.getElementById('typed');
+const nextBtn = document.getElementById('nextBtn');
+let paraIndex = 0;
+let charIndex = 0;
+
+function typeParagraph(text, callback) {
+  typedEl.textContent = '';
+  charIndex = 0;
+  function step() {
+    typedEl.textContent = text.slice(0, charIndex) + (charIndex % 2 ? '|' : '');
+    charIndex++;
+    if (charIndex <= text.length) {
+      setTimeout(step, 50);
+    } else {
+      typedEl.textContent = text; 
+      if(callback) callback();
+    }
+  }
+  step();
+}
+
+typeParagraph(paragraphs[paraIndex]);
+
+nextBtn.addEventListener('click', ()=>{
+  paraIndex++;
+  if(paraIndex < paragraphs.length){
+    typeParagraph(paragraphs[paraIndex]);
+  } else {
+    typedEl.style.display = 'none';
+    nextBtn.style.display = 'none';
+    document.getElementById('sorpresa').style.display = 'block';
+  }
+});
+
+const siBtn = document.getElementById('siBtn');
+const noBtn = document.getElementById('noBtn');
+
+siBtn.addEventListener('click', ()=>{
+  makeHearts();
+  siBtn.style.display = 'none';
+  noBtn.style.display = 'none';
+});
+
+noBtn.addEventListener('click', ()=>{
+  noBtn.textContent = "Ahora sí :D";
+  noBtn.addEventListener('click', ()=>{
+    makeHearts();
+    siBtn.style.display = 'none';
+    noBtn.style.display = 'none';
+  }, {once:true});
+});
+
+const confettiContainer = document.getElementById('confetti');
+function makeHearts(){
+  for(let i=0;i<36;i++){
+    const el = document.createElement('div');
+    el.className = 'piece';
+    el.style.left = Math.random()*100 + '%';
+    el.style.top = '-10%';
+    const size = 12 + Math.random()*12;
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    confettiContainer.appendChild(el);
+    const duration = 3000 + Math.random()*2000;
+    el.animate([
+      { transform: `translateY(0px) rotate(0deg)` },
+      { transform: `translateY(400px) rotate(${Math.random()*360}deg)` }
+    ], { duration: duration, easing: 'linear' });
+    setTimeout(()=> el.remove(), duration);
+  }
+}
+</script>
+</body>
+</html>
